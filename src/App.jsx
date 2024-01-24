@@ -16,20 +16,7 @@ const WINNER_COMBOS = [
   [2, 4, 6]
 ]
 
-const checkWinner = (boardToCheck) => {
-  for (const combo of WINNER_COMBOS) {
-    const [a, b, c] = combo
-    if (
-      boardToCheck[a] &&
-      boardToCheck[a] === boardToCheck[b] &&
-      boardToCheck[a] === boardToCheck[c]
-    ) {
-      return boardToCheck[a]
-    }
-  }
-  //si no hay ganador
-  return null
-}
+
 
 const Square = ({ children, updateBoard, index, isSelected }) => {
   const className = `square ${isSelected ? 'is-selected' : ''}`
@@ -51,7 +38,26 @@ function App() {
   //null no hay ganador, false es un empate
   const [winner, setWinner] = useState(null)
 
+  const checkWinner = (boardToCheck) => {
+    for (const combo of WINNER_COMBOS) {
+      const [a, b, c] = combo
+      if (
+        boardToCheck[a] &&
+        boardToCheck[a] === boardToCheck[b] &&
+        boardToCheck[a] === boardToCheck[c]
+      ) {
+        return boardToCheck[a]
+      }
+    }
+    //si no hay ganador
+    return null
+  }
 
+  const resetGame = () => {
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
+  }
 
   const updateBoard = (index) => {
     //Se hay algo en la casilla, no sobreescribe la misma, y si hay ganador no se sigue jugando
@@ -96,6 +102,28 @@ function App() {
         <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
+
+      {
+        winner !== null && (
+          <section className="winner">
+            <div className="text">
+              <h2>
+                {
+                  winner === false
+                    ? 'Empate'
+                    : 'Ganó: '
+                }
+              </h2>
+              <header className="win">
+                {winner && <Square>{winner}</Square>}
+              </header>
+              <footer>
+                <button onClick={resetGame}>Empezar de nuevo</button>
+              </footer>
+            </div>
+          </section>
+        )
+      }
     </main>
   )
 }
